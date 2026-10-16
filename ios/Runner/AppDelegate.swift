@@ -12,11 +12,18 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-    let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "TouchFishSocialPlugin")
+
+    guard let registrar = engineBridge.pluginRegistry.registrar(
+      forPlugin: "TouchFishSocialPlugin"
+    ) else {
+      return
+    }
+
     let socialChannel = FlutterMethodChannel(
       name: "touch_fish_flutter/social",
       binaryMessenger: registrar.messenger()
     )
+
     socialChannel.setMethodCallHandler { call, result in
       guard call.method == "openSocialApp",
             let arguments = call.arguments as? [String: Any],
