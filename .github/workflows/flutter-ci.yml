@@ -46,3 +46,35 @@ jobs:
         with:
           name: flutter-android-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
+  build-ios:
+      runs-on: macos-latest
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Setup Flutter
+          uses: subosito/flutter-action@v2
+          with:
+            channel: stable
+            cache: true
+
+        - name: Install dependencies
+          run: flutter pub get
+
+        - name: Build iOS Simulator App
+          run: flutter build ios --simulator --release
+
+        - name: Package iOS App
+          run: |
+            cd build/ios/iphonesimulator
+            zip -r "$GITHUB_WORKSPACE/touch-fish-ios-simulator.zip" Runner.app
+
+        - name: Upload iOS Artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: touch-fish-ios-simulator
+            path: touch-fish-ios-simulator.zip
+            if-no-files-found: error
+    
